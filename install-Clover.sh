@@ -157,8 +157,14 @@ sudo cp /esp/efi/Microsoft/Boot/bootmgfw.efi /esp/efi/Microsoft/Boot/bootmgfw.ef
 # re-arrange the boot order and make Clover the priority!
 Clover=$(efibootmgr | grep -i Clover | colrm 9 | colrm 1 4)
 SteamOS=$(efibootmgr | grep -i SteamOS | colrm 9 | colrm 1 4)
+Batocera=$(efibootmgr | grep -i Batocera | colrm 9 | colrm 1 4)
 sudo efibootmgr -n $Clover &> /dev/null
-sudo efibootmgr -o $Clover,$SteamOS &> /dev/null
+if [ -z "$Batocera" ]
+then
+	sudo efibootmgr -o $Clover,$SteamOS &> /dev/null
+else
+	sudo efibootmgr -o $Clover,$SteamOS,$Batocera &> /dev/null
+fi
 
 # Final sanity check
 efibootmgr | grep "Clover - GUI" &> /dev/null

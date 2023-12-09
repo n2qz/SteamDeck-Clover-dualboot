@@ -238,7 +238,13 @@ test -f /esp/efi/Microsoft/Boot/bootmgfw.efi && echo Windows EFI exists! Moving 
 # re-arrange the boot order and make Clover the priority!
 Clover=\$(efibootmgr | grep -i Clover | colrm 9 | colrm 1 4)
 SteamOS=\$(efibootmgr | grep -i SteamOS | colrm 9 | colrm 1 4)
-efibootmgr -o \$Clover,\$SteamOS &> /dev/null
+Batocera=$(efibootmgr | grep -i Batocera | colrm 9 | colrm 1 4)
+if [ -z "\$Batocera" ]
+then
+	efibootmgr -o \$Clover,\$SteamOS &> /dev/null
+else
+	efibootmgr -o \$Clover,\$SteamOS,\$Batocera &> /dev/null
+fi
 
 echo "*** Current state of EFI entries ****" >> \$CloverStatus
 efibootmgr | grep -iv 'Boot2\\|PXE' >> \$CloverStatus
